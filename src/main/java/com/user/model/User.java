@@ -9,9 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 @Entity
 @Table(name = "users")
@@ -37,8 +35,6 @@ public class User {
 	private String email;
 
 	@JsonIgnore
-	@ToString.Exclude
-	@EqualsAndHashCode.Exclude
 	@Column(nullable = false)
 	private String password;
 }

@@ -7,7 +7,6 @@ import com.user.exception.ResourceNotFoundException;
 import com.user.model.User;
 import com.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,7 +16,6 @@ import java.util.List;
 public class UserService {
 
 	private final UserRepository userRepository;
-	private final PasswordEncoder passwordEncoder;
 
 	public UserResponseDto registerUser(UserRequestDto dto) {
 		if (userRepository.existsByEmail(dto.getEmail())) {
@@ -30,8 +28,8 @@ public class UserService {
 		user.setAddress(dto.getAddress());
 		user.setEmail(dto.getEmail());
 
-		// Save encrypted password in database
-		user.setPassword(passwordEncoder.encode(dto.getPassword()));
+		// Plain text password saved as requested
+		user.setPassword(dto.getPassword());
 
 		User savedUser = userRepository.save(user);
 		return mapToDto(savedUser);
@@ -40,6 +38,12 @@ public class UserService {
 	public UserResponseDto getUserById(Long id) {
 		User user = userRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+		return mapToDto(user);
+	}
+
+	public UserResponseDto getUserByEmail(String email) {
+		User user = userRepository.findByEmail(email)
+				.orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
 		return mapToDto(user);
 	}
 
